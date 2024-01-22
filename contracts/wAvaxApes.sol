@@ -41,7 +41,7 @@ contract wAvaxApes is ERC721AQueryable, IERC721Receiver, IERC2981, ReentrancyGua
 
     address public royaltyAddress = 0x5BcD0455E8b83A2d3Ad3E1e8Ca635779D7d5a253; 
 
-    bool public paused = false;
+    bool public paused;
 
     IERC721Enumerable public constant OG = IERC721Enumerable(0x6d5087B3082f73D42a32D85e38BC95dcceDe39Bb);
 
