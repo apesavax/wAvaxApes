@@ -43,7 +43,7 @@ contract wAvaxApes is ERC721AQueryable, IERC721Receiver, IERC2981, ReentrancyGua
 
     bool public paused = false;
 
-    IERC721Enumerable OG = IERC721Enumerable(0x6d5087B3082f73D42a32D85e38BC95dcceDe39Bb);
+    IERC721Enumerable public constant OG = IERC721Enumerable(0x6d5087B3082f73D42a32D85e38BC95dcceDe39Bb);
 
     event ApesWrapped(uint256[] tokenIds);
     event ApesUnwrapped(uint256[] tokenIds);
