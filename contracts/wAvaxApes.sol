@@ -31,6 +31,9 @@ error InvalidBps();
 /// @notice Error caused by trying to set the royalty address to address(0)
 error ZeroAddress();
 
+/// @notice Error caused by trying to manually wrap/unwrap an NFT that is not deposited
+error NotDeposited();
+
 contract wAvaxApes is ERC721AQueryable, IERC721Receiver, IERC2981, ReentrancyGuard, Ownable {
     using SafeERC20 for IERC20;
     using Strings for uint256;
@@ -46,7 +49,9 @@ contract wAvaxApes is ERC721AQueryable, IERC721Receiver, IERC2981, ReentrancyGua
     IERC721Enumerable public constant OG = IERC721Enumerable(0x6d5087B3082f73D42a32D85e38BC95dcceDe39Bb);
 
     event ApesWrapped(uint256[] tokenIds);
+    event ApeWrapped(uint256 tokenId);
     event ApesUnwrapped(uint256[] tokenIds);
+    event ApeUnwrapped(uint256 tokenId);
     event SetBaseURI(string uri);
     event SetRoyaltyAddress(address royaltyAddress);
     event SetRoyaltyBps(uint256 bps);
@@ -152,6 +157,30 @@ contract wAvaxApes is ERC721AQueryable, IERC721Receiver, IERC2981, ReentrancyGua
     function mintRemainder() public onlyOwner {
         if (totalSupply() >= 10_000) revert MaxMinted();
         _mint(address(this), 5_000);
+    }
+
+    /// @notice Used to manually send wAvaxApe to a user in case where they send OG Ape directly to contract.
+    function manualWrap(uint256 _tokenId) public onlyOwner {
+        if (OG.ownerOf(_tokenId) != address(this)) revert NotDeposited();
+        _tokenApprovals[_tokenId].value = msg.sender;
+        safeTransferFrom(address(this), msg.sender, _tokenId);
+
+        emit ApeWrapped(_tokenId);
+    }
+
+    /// @notice Used to manually send OG Ape to a user in case where they send wAvax Ape directly to contract.
+    function manualUnwrap(uint256 _tokenId) public onlyOwner {
+        if (ownerOf(_tokenId) != address(this)) revert NotDeposited();
+        OG.safeTransferFrom(address(this), msg.sender, _tokenId);
+
+        emit ApeUnwrapped(_tokenId);
+    }
+
+    /// @notice Used to withdraw ERC721 tokens sent to the contract by mistake. 
+    /// @dev OG Apes and wAvax Apes cannot be withdrawn with this function to protect users. 
+    function emergencyWithdrawERC721(address _contract, uint256 _tokenId, address _to) public onlyOwner {
+        if (_contract == address(OG) || _contract == address(this)) revert InvalidNFT();
+        IERC721(_contract).safeTransferFrom(address(this), _to, _tokenId);
     }
 
     /// @notice Used to withdraw ERC20 tokens that become locked in the contract.
