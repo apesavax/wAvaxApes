@@ -1,0 +1,7 @@
+[
+  "function getApproved(uint256) view returns (address)",
+  "function ownerOf(uint256) returns (address)",
+  "function reflectToOwners() payable",
+  "function tokenMinter(uint256) view returns (address)",
+  "function transferFrom(address,address,uint256)"
+]
