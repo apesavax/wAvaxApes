@@ -1,14 +1,36 @@
-Avax Apes Wrapper Contract
+![Logo](https://github.com/apesavax/wAvaxApes/blob/main/logo.png)
 
-This contract is used to wrap OG ERC721Enumerable Avax Apes into a new ERC721A implementation due to issues caused by the OG contract's integration with its internal marketplace. 
+## Introduction
 
-Because the claimReward function in the OG contract uses getApproved() and not isApprovedForAll(), many marketplaces cannot suport the sale of these NFTs. 
+The Avax Apes were the first unique PFP NFT project on Avalanche. However, being early also meant unforseen consequences of non-standard coding practices. 
 
-Also, custodial marketplaces have issues if they do not implement a receive() function on their marketplace contract since when transferring OG Apes, internal marketplace royalty share funds may be sent to the NFT holder (in this case, the marketplace contract).
+A seemingly innocuous check using getApproved in the _beforeTokenTransfer function means that setApprovalForAll is not a valid method for granting approval of a user's tokens. Unfortunately, setApprovalForAll is the standard used by NFT Marketplaces since it allows the user to only need one approval transaction for an entire collection. 
 
-OG Apes Contract: https://snowtrace.io/address/0x6d5087B3082f73D42a32D85e38BC95dcceDe39Bb/contract/43114/code?chainId=43114
+## wAvax Apes
 
-Internal Marketplace (I THINK, it isn't verified but I believe the source in the contracts folder is correct): https://snowtrace.io/address/0x3342276A93fA7a16c4D7599788C93da98eEeE13b
+To resolve this unique approval issue and allow the open trading of Avax Apes on all marketplaces, a wrapper contract was designed. This wrapper is simple in nature, and is meant to securely store your OG Avax Ape while allowing you to freely trade a modern ERC721A copy.
 
-Auditor Notes: 
-ERC721A is imported locally because a modification was made to the ERC721A contract to make _tokenApprovals internal rather than private. This was done to allow the contract to hold its own NFTs and send them to users during wrap.
+At any time, users can unwrap their OG Avax Ape leaving the on-chain provenance and historical value in tact. 
+
+A dApp to facilitate the wrapping and unwrapping of Avax Apes can be found here:
+
+- [ApedIn](https://apedin.org)
+
+## Authors
+
+- [@xrpant](https://www.x.com/xrpant)
+
+## Audits
+
+This contract was audited by Blaize Security in January of 2024. You can view the report in this repository. (/audits/reports)
+
+## Mainnet Deployment
+
+This contract was deployed to the Avalanche Mainnet on 1/25/2024.
+
+Contract Address: 0x28bE2bd3c3Af1c947431D84b74fD432faA86cdC6
+
+Verified on:
+
+- [Snowtrace](https://snowtrace.io/token/0x28bE2bd3c3Af1c947431D84b74fD432faA86cdC6/contract/code?chainId=43114)
+- [LORE](https://skilift.io/v1/0x28be2bd3c3af1c947431d84b74fd432faa86cdc6?tab=Code)
